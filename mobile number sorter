@@ -1,0 +1,84 @@
+import java.util.Scanner;
+
+public class MobileNumberSorter {
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of mobile numbers: ");
+        int numNumbers = scanner.nextInt();
+        scanner.nextLine();  // Consume newline
+
+        String[] mobileNumbers = new String[numNumbers];
+
+        // Input mobile numbers from the user
+        for (int i = 0; i < numNumbers; i++) {
+            System.out.print("Enter mobile number " + (i + 1) + ": ");
+            mobileNumbers[i] = scanner.nextLine();
+        }
+
+        // Perform merge sort
+        mergeSort(mobileNumbers, 0, numNumbers - 1);
+
+        // Display sorted mobile numbers
+        System.out.println("Sorted mobile numbers:");
+        for (String number : mobileNumbers) {
+            System.out.println(number);
+        }
+
+        scanner.close();
+    }
+
+    // Merge sort algorithm
+    private static void mergeSort(String[] arr, int left, int right) {
+        if (left < right) {
+            int mid = (left + right) / 2;
+            mergeSort(arr, left, mid);
+            mergeSort(arr, mid + 1, right);
+            merge(arr, left, mid, right);
+        }
+    }
+
+    private static void merge(String[] arr, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+
+        String[] leftArray = new String[n1];
+        String[] rightArray = new String[n2];
+
+        // Copy data to temporary arrays
+        for (int i = 0; i < n1; i++) {
+            leftArray[i] = arr[left + i];
+        }
+        for (int j = 0; j < n2; j++) {
+            rightArray[j] = arr[mid + 1 + j];
+        }
+
+        // Merge the two arrays
+        int i = 0, j = 0;
+        int k = left;
+
+        while (i < n1 && j < n2) {
+            if (leftArray[i].compareTo(rightArray[j]) <= 0) {
+                arr[k] = leftArray[i];
+                i++;
+            } else {
+                arr[k] = rightArray[j];
+                j++;
+            }
+            k++;
+        }
+
+        while (i < n1) {
+            arr[k] = leftArray[i];
+            i++;
+            k++;
+        }
+
+        while (j < n2) {
+            arr[k] = rightArray[j];
+            j++;
+            k++;
+        }
+    }
+}
