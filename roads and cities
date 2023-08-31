@@ -1,0 +1,43 @@
+#include <stdio.h>
+#include <limits.h>
+#define MAX_CITIES 100
+#define INF INT_MAX
+struct Edge {
+    int source, destination, weight;
+};
+struct Edge edges[MAX_CITIES];
+int distances[MAX_CITIES];
+int numCities, numEdges;
+void bellmanFord(int source) {
+    for (int i = 0; i < numCities; ++i) {
+        distances[i] = INF;
+    }
+    distances[source] = 0;
+    for (int i = 0; i < numCities - 1; ++i) {
+        for (int j = 0; j < numEdges; ++j) {
+            int u = edges[j].source;
+            int v = edges[j].destination;
+            int weight = edges[j].weight;
+            if (distances[u] != INF && distances[u] + weight < distances[v]) {
+                distances[v] = distances[u] + weight;
+            }
+        }
+    }
+}
+int main() {
+    printf("Enter the number of cities and edges: ");
+    scanf("%d %d", &numCities, &numEdges);
+    for (int i = 0; i < numEdges; ++i) {
+        printf("Enter source, destination, and weight of edge %d: ", i + 1);
+        scanf("%d %d %d", &edges[i].source, &edges[i].destination, &edges[i].weight);
+    }
+    int sourceCity;
+    printf("Enter the source city: ");
+    scanf("%d", &sourceCity);
+    bellmanFord(sourceCity);
+    printf("Shortest distances from city %d:\n", sourceCity);
+    for (int i = 0; i < numCities; ++i) {
+        printf("City %d: Distance = %d\n", i, distances[i]);
+    }
+    return 0;
+}
