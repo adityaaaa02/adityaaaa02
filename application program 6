@@ -1,0 +1,93 @@
+APPLICATION PROGRAM 6:
+A city needs to plan its infrastructure development by connecting 
+multiple locations with minimum cost. The task is to find the minimum 
+spanning tree (MST) of the city's locations using Prim's algorithm. This 
+will help determine the optimal connections and minimize the overall 
+cost of infrastructure development. The objective of this case study is 
+to implement Prim's algorithm to solve the infrastructure planning 
+problem in C language. By solving this problem, we can identify the 
+minimum cost connections between locations and guide the city's 
+infrastructure development.
+
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX_LOCATIONS 100
+#define INF 999999
+
+int locations, edges;
+int adjacencyMatrix[MAX_LOCATIONS][MAX_LOCATIONS];
+int parent[MAX_LOCATIONS];
+int minKey[MAX_LOCATIONS];
+bool mstSet[MAX_LOCATIONS];
+
+int findMinKey() {
+    int min = INF, minIndex;
+    
+    for (int v = 0; v < locations; v++) {
+        if (!mstSet[v] && minKey[v] < min) {
+            min = minKey[v];
+            minIndex = v;
+        }
+    }
+    
+    return minIndex;
+}
+
+void printMST() {
+    printf("Edge \tWeight\n");
+    for (int i = 1; i < locations; i++) {
+        printf("%d - %d \t%d\n", parent[i], i, adjacencyMatrix[i][parent[i]]);
+    }
+}
+
+void primMST() {
+    for (int i = 0; i < locations; i++) {
+        minKey[i] = INF;
+        mstSet[i] = false;
+    }
+    
+    minKey[0] = 0;
+    parent[0] = -1;
+    
+    for (int count = 0; count < locations - 1; count++) {
+        int u = findMinKey();
+        mstSet[u] = true;
+        
+        for (int v = 0; v < locations; v++) {
+            if (adjacencyMatrix[u][v] && !mstSet[v] && adjacencyMatrix[u][v] < minKey[v]) {
+                parent[v] = u;
+                minKey[v] = adjacencyMatrix[u][v];
+            }
+        }
+    }
+    
+    printMST();
+}
+
+int main() {
+    printf("Enter the number of locations: ");
+    scanf("%d", &locations);
+    
+    printf("Enter the number of connections: ");
+    scanf("%d", &edges);
+    
+    for (int i = 0; i < locations; i++) {
+        for (int j = 0; j < locations; j++) {
+            adjacencyMatrix[i][j] = 0;
+        }
+    }
+    
+    printf("Enter the connections and their weights:\n");
+    for (int i = 0; i < edges; i++) {
+        int source, destination, weight;
+        scanf("%d %d %d", &source, &destination, &weight);
+        adjacencyMatrix[source][destination] = weight;
+        adjacencyMatrix[destination][source] = weight;
+    }
+    
+    printf("Minimum Spanning Tree:\n");
+    primMST();
+    
+    return 0;
+}
