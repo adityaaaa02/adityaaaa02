@@ -1,0 +1,85 @@
+APPLICATION PROGRAM 4:
+In a transportation network, there are multiple cities connected by 
+roads with various distances between them. The task is to find the 
+shortest path from a given source city to all other cities in the 
+network. This information is crucial for effective transportation 
+planning and route optimization. Implement the Bellman-Ford 
+algorithm in C language to solve the transportation planning problem
+to determine the shortest paths and distances from the source city to 
+all other cities in the network.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <limits.h>
+
+// Structure to represent a road (edge) in the network
+struct Road {
+    int source;
+    int destination;
+    int distance;
+};
+
+// Function to perform the Bellman-Ford algorithm
+void bellmanFord(struct Road roads[], int numCities, int numRoads, int source) {
+    int distances[numCities];
+
+    // Initialize distances to a maximum value
+    for (int i = 0; i < numCities; ++i) {
+        distances[i] = INT_MAX;
+    }
+
+    distances[source] = 0; // Distance from source to itself is 0
+
+    // Relax edges repeatedly
+    for (int i = 0; i < numCities - 1; ++i) {
+        for (int j = 0; j < numRoads; ++j) {
+            int u = roads[j].source;
+            int v = roads[j].destination;
+            int weight = roads[j].distance;
+
+            if (distances[u] != INT_MAX && distances[u] + weight < distances[v]) {
+                distances[v] = distances[u] + weight;
+            }
+        }
+    }
+
+    // Check for negative weight cycles
+    for (int i = 0; i < numRoads; ++i) {
+        int u = roads[i].source;
+        int v = roads[i].destination;
+        int weight = roads[i].distance;
+
+        if (distances[u] != INT_MAX && distances[u] + weight < distances[v]) {
+            printf("Negative weight cycle detected. The graph contains negative cycles.\n");
+            return;
+        }
+    }
+
+    // Print shortest distances
+    printf("Shortest distances from source city %d:\n", source);
+    for (int i = 0; i < numCities; ++i) {
+        printf("City %d: %d\n", i, distances[i]);
+    }
+}
+
+int main() {
+    int numCities, numRoads, source;
+    printf("Enter the number of cities: ");
+    scanf("%d", &numCities);
+    printf("Enter the number of roads: ");
+    scanf("%d", &numRoads);
+
+    struct Road roads[numRoads];
+    for (int i = 0; i < numRoads; ++i) {
+        printf("Enter details for road %d (source destination distance): ", i + 1);
+        scanf("%d %d %d", &roads[i].source, &roads[i].destination, &roads[i].distance);
+    }
+
+    printf("Enter the source city: ");
+    scanf("%d", &source);
+
+    bellmanFord(roads, numCities, numRoads, source);
+
+    return 0;
+}
